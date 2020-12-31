@@ -30,7 +30,7 @@ _start:
             bit [0]: 0 低转换率
      */
     ldr r0,=0x020E02F4
-    ldr r1,=0x0X10B0
+    ldr r1,=0x000010B0
     str r1,[r0]
 
 
