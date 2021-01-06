@@ -1,4 +1,4 @@
-objs =  main.o start.o
+objs =  start.o main.o
 
 ledc.bin : $(objs)
 	arm-linux-gnueabihf-ld -Ttext 0x87800000 $^ -o ledc.elf
