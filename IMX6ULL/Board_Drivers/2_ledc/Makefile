@@ -6,10 +6,10 @@ ledc.bin : $(objs)
 	arm-linux-gnueabihf-objdump -D -m arm ledc.elf > ledc.dis
 
 %.o : %.c
-	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -o $@ $<
+	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -O2 -o $@ $<
 
 %.o : %.S
-	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -o $@ $<
+	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -O2 -o $@ $<
 
 clean:
 	rm -rf *.o ledc.bin ledc.elf ledc.dis
