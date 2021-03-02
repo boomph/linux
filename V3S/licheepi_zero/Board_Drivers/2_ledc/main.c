@@ -8,6 +8,8 @@ int main(void){
 
     /* PG1 置 0*/
     GPIO_ResetPin(PORT_G,1);
+
+    while(1);
     
     return 0;
 }
