@@ -8,10 +8,10 @@ ledc.bin : $(objs)
 
 
 %.o : %.c
-	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -O2 -o $@ $<
+	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -o $@ $<
 
 %.o : %.S
-	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -O2 -o $@ $<
+	arm-linux-gnueabihf-gcc -Wall -nostdlib -c -o $@ $<
 
 clean:
 	rm -rf *.o ledc.bin ledc.elf ledc.dis

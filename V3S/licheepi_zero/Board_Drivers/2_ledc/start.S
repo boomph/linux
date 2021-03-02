@@ -1,7 +1,7 @@
 
-.global __start
+.global _start
 
-__start:
+_start:
     /*设置CONTEX-A7处理器进入SVC模式 */
      mrs r0,cpsr            /*读取CPSR到R0 */
      bic r0,r0,#0x1f        /*清除CPSR的BIT4-0位 */
@@ -14,4 +14,3 @@ __start:
      */
      ldr sp,=0x40020000
      b main                 /*跳至MAIN函数 */
-     
