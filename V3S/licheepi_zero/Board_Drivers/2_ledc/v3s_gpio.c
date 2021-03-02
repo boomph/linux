@@ -1,7 +1,7 @@
 #include "v3s_gpio.h"
 #include "v3s_sys.h"
 
-extern PIO_Map *PIO = NULL;
+PIO_Map *PIO = NULL;
 
 void GPIO_Init(GPIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_PUL pul)
 {    
