@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"v3s_gpio.h": "c",
+			"v3s_sys.h": "c"
+		}
+	}
+}
