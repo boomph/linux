@@ -21,7 +21,7 @@ INCLUDE				:= 	$(patsubst %,-I %,$(INCDIRS))
 
 
 
-SFILES				:=	${foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.S))
+SFILES				:=	$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.S))
 CFILES				:=	$(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.c))
 
 print:
