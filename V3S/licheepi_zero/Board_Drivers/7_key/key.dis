@@ -164,7 +164,7 @@ Disassembly of section .text.startup:
 410001a6:	2001      	movs	r0, #1
 410001a8:	f7ff ffca 	bl	41000140 <GPIO_GetPinData>
 410001ac:	2800      	cmp	r0, #0
-410001ae:	d0f9      	beq.n	410001a4 <main+0x2c>
+410001ae:	d1f9      	bne.n	410001a4 <main+0x2c>
 410001b0:	2103      	movs	r1, #3
 410001b2:	2001      	movs	r0, #1
 410001b4:	f7ff ff9e 	bl	410000f4 <GPIO_SetPin>

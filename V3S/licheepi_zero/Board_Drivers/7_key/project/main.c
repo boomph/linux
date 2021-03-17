@@ -13,7 +13,7 @@ int main(void){
     GPIO_ResetPin(PIO_PORT_B,3);
 
     while(1){
-        if(GPIO_GetPinData(PIO_PORT_B,2) != 0)
+        if(GPIO_GetPinData(PIO_PORT_B,2) == 0)
             GPIO_SetPin(PIO_PORT_B,3);
     }
 
