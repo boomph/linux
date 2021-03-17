@@ -2,7 +2,7 @@
 .global _bss_start
 .global _bss_end
 
-_bss_start：
+_bss_start:
     .word __bss_start
 
 _bss_end:
@@ -30,4 +30,4 @@ bss_loop:
     ldr sp,=0x40020000
 
     //go to main
-    b mmain
+    b main
