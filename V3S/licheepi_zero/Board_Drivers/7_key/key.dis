@@ -5,10 +5,10 @@ key.elf:     file format elf32-littlearm
 Disassembly of section .text:
 
 41000000 <_bss_start>:
-41000000:	410001a4 	smlatbmi	r0, r4, r1, r0
+41000000:	410001a8 	smlatbmi	r0, r8, r1, r0
 
 41000004 <_bss_end>:
-41000004:	410001a8 	smlatbmi	r0, r8, r1, r0
+41000004:	410001ac 	smlatbmi	r0, ip, r1, r0
 
 41000008 <_start>:
 41000008:	e10f0000 	mrs	r0, CPSR
@@ -37,7 +37,7 @@ Disassembly of section .text:
 
 4100005c <GPIO_Init>:
 4100005c:	eb00 00c0 	add.w	r0, r0, r0, lsl #3
-41000060:	f240 1ca4 	movw	ip, #420	; 0x1a4
+41000060:	f240 1ca8 	movw	ip, #424	; 0x1a8
 41000064:	b5f0      	push	{r4, r5, r6, r7, lr}
 41000066:	eb00 06d1 	add.w	r6, r0, r1, lsr #3
 4100006a:	f001 0407 	and.w	r4, r1, #7
@@ -81,7 +81,7 @@ Disassembly of section .text:
 410000f2:	bf00      	nop
 
 410000f4 <GPIO_SetPin>:
-410000f4:	f240 13a4 	movw	r3, #420	; 0x1a4
+410000f4:	f240 13a8 	movw	r3, #424	; 0x1a8
 410000f8:	f2c4 1300 	movt	r3, #16640	; 0x4100
 410000fc:	681a      	ldr	r2, [r3, #0]
 410000fe:	b152      	cbz	r2, 41000116 <GPIO_SetPin+0x22>
@@ -97,7 +97,7 @@ Disassembly of section .text:
 41000116:	4770      	bx	lr
 
 41000118 <GPIO_ResetPin>:
-41000118:	f240 13a4 	movw	r3, #420	; 0x1a4
+41000118:	f240 13a8 	movw	r3, #424	; 0x1a8
 4100011c:	f2c4 1300 	movt	r3, #16640	; 0x4100
 41000120:	681a      	ldr	r2, [r3, #0]
 41000122:	b15a      	cbz	r2, 4100013c <GPIO_ResetPin+0x24>
@@ -114,7 +114,7 @@ Disassembly of section .text:
 4100013e:	bf00      	nop
 
 41000140 <GPIO_GetPinData>:
-41000140:	f240 12a4 	movw	r2, #420	; 0x1a4
+41000140:	f240 12a8 	movw	r2, #424	; 0x1a8
 41000144:	f2c4 1200 	movt	r2, #16640	; 0x4100
 41000148:	6813      	ldr	r3, [r2, #0]
 4100014a:	b173      	cbz	r3, 4100016a <GPIO_GetPinData+0x2a>
@@ -143,28 +143,30 @@ Disassembly of section .text.startup:
 41000178 <main>:
 41000178:	b500      	push	{lr}
 4100017a:	b083      	sub	sp, #12
-4100017c:	2301      	movs	r3, #1
-4100017e:	2102      	movs	r1, #2
-41000180:	4618      	mov	r0, r3
-41000182:	9100      	str	r1, [sp, #0]
-41000184:	2200      	movs	r2, #0
-41000186:	2400      	movs	r4, #0
+4100017c:	2401      	movs	r4, #1
+4100017e:	2300      	movs	r3, #0
+41000180:	461a      	mov	r2, r3
+41000182:	4620      	mov	r0, r4
+41000184:	2102      	movs	r1, #2
+41000186:	9400      	str	r4, [sp, #0]
 41000188:	f7ff ff68 	bl	4100005c <GPIO_Init>
-4100018c:	2301      	movs	r3, #1
-4100018e:	4618      	mov	r0, r3
+4100018c:	2500      	movs	r5, #0
+4100018e:	4620      	mov	r0, r4
 41000190:	2103      	movs	r1, #3
-41000192:	461a      	mov	r2, r3
-41000194:	9400      	str	r4, [sp, #0]
-41000196:	f7ff ff61 	bl	4100005c <GPIO_Init>
-4100019a:	2103      	movs	r1, #3
-4100019c:	2001      	movs	r0, #1
-4100019e:	f7ff ffbb 	bl	41000118 <GPIO_ResetPin>
-410001a2:	e7fe      	b.n	410001a2 <main+0x2a>
+41000192:	4623      	mov	r3, r4
+41000194:	4622      	mov	r2, r4
+41000196:	9500      	str	r5, [sp, #0]
+41000198:	f7ff ff60 	bl	4100005c <GPIO_Init>
+4100019c:	4620      	mov	r0, r4
+4100019e:	2103      	movs	r1, #3
+410001a0:	f7ff ffba 	bl	41000118 <GPIO_ResetPin>
+410001a4:	e7fe      	b.n	410001a4 <main+0x2c>
+410001a6:	bf00      	nop
 
 Disassembly of section .bss:
 
-410001a4 <PIO>:
-410001a4:	00000000 	andeq	r0, r0, r0
+410001a8 <PIO>:
+410001a8:	00000000 	andeq	r0, r0, r0
 
 Disassembly of section .comment:
 
