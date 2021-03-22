@@ -6,8 +6,8 @@
 int main(void){
     char led = 0;
 
-    //init pb2 输出，低点亮LED
-    GPIO_Init(PIO_PORT_B,2,PIO_MODE_OUT,PIO_DRV_LEVEL1,PIO_PULL_DISABLE);
+    //init pb3 输出，HIGH点亮LED
+    GPIO_Init(PIO_PORT_B,3,PIO_MODE_OUT,PIO_DRV_LEVEL1,PIO_PULL_DISABLE);
     
 
 
@@ -16,12 +16,12 @@ int main(void){
         if(led){
             led=0;
 
-            GPIO_ResetPin(PIO_PORT_B,2);
+            GPIO_SetPin(PIO_PORT_B,3);
         }
         else{
             led=1;
         
-            GPIO_SetPin(PIO_PORT_B,2);
+            GPIO_ResetPin(PIO_PORT_B,3);
         }
 
         delay_ms(1000);
