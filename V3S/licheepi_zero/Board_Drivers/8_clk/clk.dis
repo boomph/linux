@@ -37,7 +37,7 @@ Disassembly of section .text:
 
 4100005c <delay_ms>:
 4100005c:	b084      	sub	sp, #16
-4100005e:	f641 71ff 	movw	r1, #8191	; 0x1fff
+4100005e:	f649 71ff 	movw	r1, #40959	; 0x9fff
 41000062:	9001      	str	r0, [sp, #4]
 41000064:	9b01      	ldr	r3, [sp, #4]
 41000066:	1e5a      	subs	r2, r3, #1
