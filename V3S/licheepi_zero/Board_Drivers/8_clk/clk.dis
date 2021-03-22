@@ -1,0 +1,231 @@
+
+clk.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+41000000 <_bss_start>:
+41000000:	410001dc 	ldrdmi	r0, [r0, -ip]
+
+41000004 <_bss_end>:
+41000004:	410001e0 	smlattmi	r0, r0, r1, r0
+
+41000008 <_start>:
+41000008:	e10f0000 	mrs	r0, CPSR
+4100000c:	e3c0001f 	bic	r0, r0, #31
+41000010:	e3800013 	orr	r0, r0, #19
+41000014:	e129f000 	msr	CPSR_fc, r0
+41000018:	e51f0020 	ldr	r0, [pc, #-32]	; 41000000 <_bss_start>
+4100001c:	e51f1020 	ldr	r1, [pc, #-32]	; 41000004 <_bss_end>
+41000020:	e3a02000 	mov	r2, #0
+
+41000024 <bss_loop>:
+41000024:	e8a00004 	stmia	r0!, {r2}
+41000028:	e1500001 	cmp	r0, r1
+4100002c:	dafffffc 	ble	41000024 <bss_loop>
+41000030:	e51fd000 	ldr	sp, [pc, #-0]	; 41000038 <bss_loop+0x14>
+41000034:	ea000059 	b	410001a0 <__main_from_arm>
+41000038:	40020000 	andmi	r0, r2, r0
+4100003c:	00001e41 	andeq	r1, r0, r1, asr #28
+41000040:	61656100 	cmnvs	r5, r0, lsl #2
+41000044:	01006962 	tsteq	r0, r2, ror #18
+41000048:	00000014 	andeq	r0, r0, r4, lsl r0
+4100004c:	412d3705 			; <UNDEFINED> instruction: 0x412d3705
+41000050:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+41000054:	09010841 	stmdbeq	r1, {r0, r6, fp}
+41000058:	00040a02 	andeq	r0, r4, r2, lsl #20
+
+4100005c <delay_ms>:
+4100005c:	b084      	sub	sp, #16
+4100005e:	f240 31ff 	movw	r1, #1023	; 0x3ff
+41000062:	9001      	str	r0, [sp, #4]
+41000064:	9b01      	ldr	r3, [sp, #4]
+41000066:	1e5a      	subs	r2, r3, #1
+41000068:	9201      	str	r2, [sp, #4]
+4100006a:	b153      	cbz	r3, 41000082 <delay_ms+0x26>
+4100006c:	9103      	str	r1, [sp, #12]
+4100006e:	9b03      	ldr	r3, [sp, #12]
+41000070:	1e5a      	subs	r2, r3, #1
+41000072:	9203      	str	r2, [sp, #12]
+41000074:	2b00      	cmp	r3, #0
+41000076:	d1fa      	bne.n	4100006e <delay_ms+0x12>
+41000078:	9b01      	ldr	r3, [sp, #4]
+4100007a:	1e5a      	subs	r2, r3, #1
+4100007c:	9201      	str	r2, [sp, #4]
+4100007e:	2b00      	cmp	r3, #0
+41000080:	d1f4      	bne.n	4100006c <delay_ms+0x10>
+41000082:	b004      	add	sp, #16
+41000084:	4770      	bx	lr
+41000086:	bf00      	nop
+
+41000088 <GPIO_Init>:
+41000088:	eb00 00c0 	add.w	r0, r0, r0, lsl #3
+4100008c:	f240 1cdc 	movw	ip, #476	; 0x1dc
+41000090:	b5f0      	push	{r4, r5, r6, r7, lr}
+41000092:	eb00 06d1 	add.w	r6, r0, r1, lsr #3
+41000096:	f001 0407 	and.w	r4, r1, #7
+4100009a:	f44f 6500 	mov.w	r5, #2048	; 0x800
+4100009e:	f2c0 15c2 	movt	r5, #450	; 0x1c2
+410000a2:	eb00 1011 	add.w	r0, r0, r1, lsr #4
+410000a6:	00a4      	lsls	r4, r4, #2
+410000a8:	f2c4 1c00 	movt	ip, #16640	; 0x4100
+410000ac:	f855 7026 	ldr.w	r7, [r5, r6, lsl #2]
+410000b0:	f04f 0e07 	mov.w	lr, #7
+410000b4:	f001 010f 	and.w	r1, r1, #15
+410000b8:	fa0e fe04 	lsl.w	lr, lr, r4
+410000bc:	0080      	lsls	r0, r0, #2
+410000be:	f8cc 5000 	str.w	r5, [ip]
+410000c2:	f100 70e1 	add.w	r0, r0, #29491200	; 0x1c20000
+410000c6:	0049      	lsls	r1, r1, #1
+410000c8:	ea27 070e 	bic.w	r7, r7, lr
+410000cc:	40a2      	lsls	r2, r4
+410000ce:	f845 7026 	str.w	r7, [r5, r6, lsl #2]
+410000d2:	fa03 fc01 	lsl.w	ip, r3, r1
+410000d6:	f855 4026 	ldr.w	r4, [r5, r6, lsl #2]
+410000da:	f06f 0e03 	mvn.w	lr, #3
+410000de:	9b05      	ldr	r3, [sp, #20]
+410000e0:	fa0e fe01 	lsl.w	lr, lr, r1
+410000e4:	4322      	orrs	r2, r4
+410000e6:	f845 2026 	str.w	r2, [r5, r6, lsl #2]
+410000ea:	f8d0 2814 	ldr.w	r2, [r0, #2068]	; 0x814
+410000ee:	fa03 f101 	lsl.w	r1, r3, r1
+410000f2:	ea02 020e 	and.w	r2, r2, lr
+410000f6:	f8c0 2814 	str.w	r2, [r0, #2068]	; 0x814
+410000fa:	f8d0 3814 	ldr.w	r3, [r0, #2068]	; 0x814
+410000fe:	ea4c 0303 	orr.w	r3, ip, r3
+41000102:	f8c0 3814 	str.w	r3, [r0, #2068]	; 0x814
+41000106:	f8d0 381c 	ldr.w	r3, [r0, #2076]	; 0x81c
+4100010a:	ea0e 0303 	and.w	r3, lr, r3
+4100010e:	f8c0 381c 	str.w	r3, [r0, #2076]	; 0x81c
+41000112:	f8d0 381c 	ldr.w	r3, [r0, #2076]	; 0x81c
+41000116:	4319      	orrs	r1, r3
+41000118:	f8c0 181c 	str.w	r1, [r0, #2076]	; 0x81c
+4100011c:	bdf0      	pop	{r4, r5, r6, r7, pc}
+4100011e:	bf00      	nop
+
+41000120 <GPIO_SetPin>:
+41000120:	f240 13dc 	movw	r3, #476	; 0x1dc
+41000124:	f2c4 1300 	movt	r3, #16640	; 0x4100
+41000128:	681a      	ldr	r2, [r3, #0]
+4100012a:	b152      	cbz	r2, 41000142 <GPIO_SetPin+0x22>
+4100012c:	b410      	push	{r4}
+4100012e:	2424      	movs	r4, #36	; 0x24
+41000130:	fb04 2000 	mla	r0, r4, r0, r2
+41000134:	2301      	movs	r3, #1
+41000136:	f85d 4b04 	ldr.w	r4, [sp], #4
+4100013a:	408b      	lsls	r3, r1
+4100013c:	6901      	ldr	r1, [r0, #16]
+4100013e:	4319      	orrs	r1, r3
+41000140:	6101      	str	r1, [r0, #16]
+41000142:	4770      	bx	lr
+
+41000144 <GPIO_ResetPin>:
+41000144:	f240 13dc 	movw	r3, #476	; 0x1dc
+41000148:	f2c4 1300 	movt	r3, #16640	; 0x4100
+4100014c:	681a      	ldr	r2, [r3, #0]
+4100014e:	b15a      	cbz	r2, 41000168 <GPIO_ResetPin+0x24>
+41000150:	b410      	push	{r4}
+41000152:	2424      	movs	r4, #36	; 0x24
+41000154:	fb04 2000 	mla	r0, r4, r0, r2
+41000158:	2301      	movs	r3, #1
+4100015a:	f85d 4b04 	ldr.w	r4, [sp], #4
+4100015e:	408b      	lsls	r3, r1
+41000160:	6901      	ldr	r1, [r0, #16]
+41000162:	ea21 0103 	bic.w	r1, r1, r3
+41000166:	6101      	str	r1, [r0, #16]
+41000168:	4770      	bx	lr
+4100016a:	bf00      	nop
+
+4100016c <GPIO_GetPinData>:
+4100016c:	f240 12dc 	movw	r2, #476	; 0x1dc
+41000170:	f2c4 1200 	movt	r2, #16640	; 0x4100
+41000174:	6813      	ldr	r3, [r2, #0]
+41000176:	b173      	cbz	r3, 41000196 <GPIO_GetPinData+0x2a>
+41000178:	b410      	push	{r4}
+4100017a:	2424      	movs	r4, #36	; 0x24
+4100017c:	fb04 3000 	mla	r0, r4, r0, r3
+41000180:	2201      	movs	r2, #1
+41000182:	fa02 f101 	lsl.w	r1, r2, r1
+41000186:	f85d 4b04 	ldr.w	r4, [sp], #4
+4100018a:	6903      	ldr	r3, [r0, #16]
+4100018c:	4219      	tst	r1, r3
+4100018e:	bf14      	ite	ne
+41000190:	4610      	movne	r0, r2
+41000192:	2000      	moveq	r0, #0
+41000194:	4770      	bx	lr
+41000196:	4618      	mov	r0, r3
+41000198:	4770      	bx	lr
+4100019a:	bf00      	nop
+4100019c:	0000      	movs	r0, r0
+	...
+
+410001a0 <__main_from_arm>:
+410001a0:	e51ff004 	ldr	pc, [pc, #-4]	; 410001a4 <__main_from_arm+0x4>
+410001a4:	410001a9 	smlatbmi	r0, r9, r1, r0
+
+Disassembly of section .text.startup:
+
+410001a8 <main>:
+410001a8:	b510      	push	{r4, lr}
+410001aa:	b082      	sub	sp, #8
+410001ac:	2301      	movs	r3, #1
+410001ae:	2400      	movs	r4, #0
+410001b0:	461a      	mov	r2, r3
+410001b2:	4618      	mov	r0, r3
+410001b4:	9400      	str	r4, [sp, #0]
+410001b6:	2102      	movs	r1, #2
+410001b8:	f7ff ff66 	bl	41000088 <GPIO_Init>
+410001bc:	e006      	b.n	410001cc <main+0x24>
+410001be:	f7ff ffc1 	bl	41000144 <GPIO_ResetPin>
+410001c2:	2400      	movs	r4, #0
+410001c4:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+410001c8:	f7ff ff48 	bl	4100005c <delay_ms>
+410001cc:	2102      	movs	r1, #2
+410001ce:	2001      	movs	r0, #1
+410001d0:	2c00      	cmp	r4, #0
+410001d2:	d1f4      	bne.n	410001be <main+0x16>
+410001d4:	f7ff ffa4 	bl	41000120 <GPIO_SetPin>
+410001d8:	2401      	movs	r4, #1
+410001da:	e7f3      	b.n	410001c4 <main+0x1c>
+
+Disassembly of section .bss:
+
+410001dc <PIO>:
+410001dc:	00000000 	andeq	r0, r0, r0
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347 	bcc	10d0d24 <_bss_start-0x3ff2f2dc>
+   4:	62552820 	subsvs	r2, r5, #32, 16	; 0x200000
+   8:	75746e75 	ldrbvc	r6, [r4, #-3701]!	; 0xfffff18b
+   c:	6e694c2f 	cdpvs	12, 6, cr4, cr9, cr15, {1}
+  10:	206f7261 	rsbcs	r7, pc, r1, ror #4
+  14:	2e342e35 	mrccs	14, 1, r2, cr4, cr5, {1}
+  18:	75362d30 	ldrvc	r2, [r6, #-3376]!	; 0xfffff2d0
+  1c:	746e7562 	strbtvc	r7, [lr], #-1378	; 0xfffffa9e
+  20:	317e3175 	cmncc	lr, r5, ror r1
+  24:	34302e36 	ldrtcc	r2, [r0], #-3638	; 0xfffff1ca
+  28:	2029392e 	eorcs	r3, r9, lr, lsr #18
+  2c:	2e342e35 	mrccs	14, 1, r2, cr4, cr5, {1}
+  30:	30322030 	eorscc	r2, r2, r0, lsr r0
+  34:	36303631 			; <UNDEFINED> instruction: 0x36303631
+  38:	Address 0x0000000000000038 is out of bounds.
+
+
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00002e41 	andeq	r2, r0, r1, asr #28
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	00000024 	andeq	r0, r0, r4, lsr #32
+  10:	412d3705 			; <UNDEFINED> instruction: 0x412d3705
+  14:	070a0600 	streq	r0, [sl, -r0, lsl #12]
+  18:	09010841 	stmdbeq	r1, {r0, r6, fp}
+  1c:	12040a02 	andne	r0, r4, #8192	; 0x2000
+  20:	15011404 	strne	r1, [r1, #-1028]	; 0xfffffbfc
+  24:	18031701 	stmdane	r3, {r0, r8, r9, sl, ip}
+  28:	1c021a01 	stcne	10, cr1, [r2], {1}
+  2c:	Address 0x000000000000002c is out of bounds.
+
