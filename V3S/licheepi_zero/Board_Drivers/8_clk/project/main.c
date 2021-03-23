@@ -1,11 +1,15 @@
 #include "v3s_sys.h"
 #include "v3s_gpio.h"
 #include "v3s_delay.h"
+#include "v3s_clk.h"
 
 
 int main(void){
     char led = 0;
 
+    //配置主频
+    v3s_clk_init();
+    
     //init pb3 输出，HIGH点亮LED
     GPIO_Init(PIO_PORT_B,3,PIO_MODE_OUT,PIO_DRV_LEVEL1,PIO_PULL_DISABLE);
     

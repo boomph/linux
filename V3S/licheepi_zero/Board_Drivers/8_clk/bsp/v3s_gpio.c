@@ -18,7 +18,7 @@ void GPIO_Init(PIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_
     /* 
         以PIN7为例，28-30位即 7 % 8 * 4 = 28，清除3位，再置位
     */
-    PIO->Pn[port].CFG[cfgIndex] &= ~( ((unsigned int) 0x07) << ((pin % 8) * 4) );
+    PIO->Pn[port].CFG[cfgIndex] &= ~( ((unsigned int) 0x07) << ((pin % 8) * 4));
     PIO->Pn[port].CFG[cfgIndex] |= (((unsigned int)mode) << ((pin % 8) * 4));
 
 
@@ -34,8 +34,8 @@ void GPIO_Init(PIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_
    /* 
         以PIN15为例，2*i+1 : 2*i 位即 2*15+1 : 2*15 = 31 : 30 ，清除2位，再置位
     */
-   PIO->Pn[port].DRV[drvIndex] &= ~((unsigned int)0x03) << ((pin % 16) * 2);
-   PIO->Pn[port].DRV[drvIndex] |= ((unsigned int)drv) << ((pin % 16) * 2);
+   PIO->Pn[port].DRV[drvIndex] &= ~(((unsigned int)0x03) << ((pin % 16) * 2));
+   PIO->Pn[port].DRV[drvIndex] |= (((unsigned int)drv) << ((pin % 16) * 2));
 
 
    /* 
@@ -49,8 +49,8 @@ void GPIO_Init(PIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_
    /* 
         以PIN15为例，2*i+1 : 2*i 位即 2*15+1 : 2*15 = 31 : 30 ，清除2位，再置位
     */
-   PIO->Pn[port].PUL[pulIndex] &= ~((unsigned int)0x03) << ((pin % 16) * 2);
-   PIO->Pn[port].PUL[pulIndex] |= ((unsigned int)pul) << ((pin % 16) * 2);
+   PIO->Pn[port].PUL[pulIndex] &= ~(((unsigned int)0x03) << ((pin % 16) * 2));
+   PIO->Pn[port].PUL[pulIndex] |= (((unsigned int)pul) << ((pin % 16) * 2));
 }
 
 void GPIO_SetPin(PIO_PORT port, unsigned int pin){
