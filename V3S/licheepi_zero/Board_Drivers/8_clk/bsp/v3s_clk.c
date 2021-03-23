@@ -40,7 +40,7 @@ void v3s_clk_init(void){
         28位设为0，检测=1表示稳定
     */
    PLL->PLL_CPU_CTRL_REG=0X80001000;
-   while(PLL->PLL_CPU_CTRL_REG & 0X10000000 == 0){
+   while((PLL->PLL_CPU_CTRL_REG & 0X10000000) == 0){
        //等待 28 = 1: Locked (It indicates that the PLL has been stable.)
    }
 
