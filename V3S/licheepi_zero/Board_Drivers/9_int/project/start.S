@@ -45,11 +45,11 @@ Reset_Handler:
     */
     MRC p15,0,r0,c1,c0,0        //读取SCTLR寄存数据到r0
     //bic指令用于清空指定位
-    bic r0,r0,#(1<<12)          //关闭 I Cache
-    bic r0,r0,#(1<<11)          //关闭分支预测
-    bic r0,r0,#(1<<2)           //关闭 D Cache
-    bic r0,r0,#(1<<1)           //关闭对齐
-    bic r0,r0,#(1<<0)           //关闭MMU
+    bic r0,r0,#(0x1 << 12)          //关闭 I Cache
+    bic r0,r0,#(0x1 << 11)          //关闭分支预测
+    bic r0,r0,#(0x1 << 2)           //关闭 D Cache
+    bic r0,r0,#(0x1 << 1)           //关闭对齐
+    bic r0,r0,#(0x1 << 0)           //关闭MMU
     MCR p15,0,r0,c1,c0,0        //r0的数据写入到SCTLR寄存器
 
 
