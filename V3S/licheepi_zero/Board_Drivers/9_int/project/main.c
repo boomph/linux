@@ -28,7 +28,7 @@ int main(void){
             GPIO_ResetPin(PIO_PORT_B,3);
         }
 
-        delay_ms(1000);
+        delay_ms(3000);
 
     }
 
