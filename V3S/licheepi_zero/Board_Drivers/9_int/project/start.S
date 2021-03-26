@@ -38,18 +38,21 @@ Reset_Handler:
     cpsid i
 #endif
 
-
     /*--------------------------------------------------------------------
         关闭I、D Cache和MMU
         修改SCTLR寄存器，采用读-改-写的方式
     */
     MRC p15,0,r0,c1,c0,0        //读取SCTLR寄存数据到r0
+
+#if 0
     //bic指令用于清空指定位
     bic r0,r0,#(0x1 << 12)          //关闭 I Cache
     bic r0,r0,#(0x1 << 11)          //关闭分支预测
     bic r0,r0,#(0x1 << 2)           //关闭 D Cache
     bic r0,r0,#(0x1 << 1)           //关闭对齐
     bic r0,r0,#(0x1 << 0)           //关闭MMU
+#endif
+
     MCR p15,0,r0,c1,c0,0        //r0的数据写入到SCTLR寄存器
 
 
