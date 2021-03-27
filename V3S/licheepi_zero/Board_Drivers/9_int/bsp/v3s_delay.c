@@ -8,7 +8,7 @@ void delay_ms(volatile unsigned int ms){
 
     while(ms--){
         //约1MS
-        n=0x18fff;		//0x9fff;
+        n=0x63ff;		//0x18fff;0x9fff;
 
         while(n--){            
         }

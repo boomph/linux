@@ -5,7 +5,7 @@
 
 
 int main(void){
-    char led = 0;
+    char led = 1;
 
     //配置主频
     v3s_clk_init();
@@ -28,7 +28,7 @@ int main(void){
             GPIO_ResetPin(PIO_PORT_B,3);
         }
 
-        delay_ms(3000);
+        delay_ms(1000);
 
     }
 
