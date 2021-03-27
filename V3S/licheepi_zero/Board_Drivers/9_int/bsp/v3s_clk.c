@@ -36,10 +36,13 @@ void v3s_clk_init(void){
 
         测试:
         配置为408MHZ
-        PLL_CPU_CTRL_REG = 0X80001000
+        PLL_CPU_CTRL_REG = 0X80001000  OK
+
+	配置为1008MHZ
+	PLL_CPU_CTRL_REG = 0X80001B21
         28位设为0，检测=1表示稳定
     */
-   PLL->PLL_CPU_CTRL_REG=0X80001000;
+   PLL->PLL_CPU_CTRL_REG=0X80001B21;
    while((PLL->PLL_CPU_CTRL_REG & 0X10000000) == 0){
        //等待 28 = 1: Locked (It indicates that the PLL has been stable.)
    }
