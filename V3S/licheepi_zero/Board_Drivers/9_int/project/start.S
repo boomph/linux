@@ -186,7 +186,7 @@ IRQ_Handler:
 
     //还原r0,r1
     pop {r0,r1}         //R0=GICC_IAR的值，R1=CPU interface基址
-    str r0,[r1,0x10]    //将R0的值写入GICC_EOIR（中断结束寄存器）
+    str r0,[r1,#0x10]    //将R0的值写入GICC_EOIR（中断结束寄存器）
                         //GICC_EOIR中的EOINTID对应INTID
     
 

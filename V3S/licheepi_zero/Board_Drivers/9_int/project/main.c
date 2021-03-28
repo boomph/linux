@@ -1,5 +1,7 @@
 #include "v3s_sys.h"
 #include "bsp_gpio.h"
+#include "bsp_clk.h"
+#include "bsp_delay.h"
 
 
 int main(void){
