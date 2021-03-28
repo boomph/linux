@@ -1,7 +1,5 @@
 #include "v3s_sys.h"
-#include "v3s_gpio.h"
-#include "v3s_delay.h"
-#include "v3s_clk.h"
+#include "bsp_gpio.h"
 
 
 int main(void){
@@ -28,7 +26,7 @@ int main(void){
             GPIO_ResetPin(PIO_PORT_B,3);
         }
 
-        delay_ms(1000);
+        delay_ms(3000);
 
     }
 

@@ -1,7 +1,7 @@
 #ifndef __V3S_CLK_H
 #define __V3S_CLK_H
 
-#define CCU_BASE_ADDRESS    0x01C20000
+
 
 typedef struct{
     volatile unsigned int   PLL_CPU_CTRL_REG;       //0X0000
@@ -109,8 +109,5 @@ typedef enum{
     CPU_CLK_SRC_PLL_CPU     = 2,
     CPU_CLK_SRC_PLL1        = 3
 }CPU_CLK_SRC_SEL;
-
-void v3s_clk_init(void);
-void v3s_cpu_clk_src_switch(CPU_CLK_SRC_SEL sel);
 
 #endif //__V3S_CLK_H

@@ -1,5 +1,4 @@
-#include "v3s_gpio.h"
-#include "v3s_sys.h"
+#include "bsp_gpio.h"
 
 PIO_Map *PIO = NULL;
 

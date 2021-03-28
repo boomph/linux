@@ -1,5 +1,4 @@
-#include "v3s_clk.h"
-#include "v3s_sys.h"
+#include "bsp_clk.h"
 
 PLL_STRUCT* PLL=NULL;
 /*

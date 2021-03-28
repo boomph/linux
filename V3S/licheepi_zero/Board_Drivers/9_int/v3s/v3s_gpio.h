@@ -1,7 +1,6 @@
-#ifndef __V3S_LED_H
-#define __V3S_LED_H
+#ifndef __V3S_GPIO_H
+#define __V3S_GPIO_H
 
-#define PIO_BASE_ADDRESS 0x01C20800
 
 //unsigned int 4字节 一个PIO_Struct占36字节,对应十六进制就是0x24，正好是一个offset值。
 typedef struct{
@@ -49,11 +48,4 @@ typedef enum{
     PIO_PULL_DOWN = 0X02,
 }PIN_PUL;
 
-
-
-void GPIO_Init(PIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_PUL pul);
-void GPIO_SetPin(PIO_PORT port, unsigned int pin);
-void GPIO_ResetPin(PIO_PORT port, unsigned int pin);
-unsigned int GPIO_GetPinData(PIO_PORT port, unsigned int pin);
-
-#endif //__V3S_LED_H
+#endif //__V3S_GPIO_H

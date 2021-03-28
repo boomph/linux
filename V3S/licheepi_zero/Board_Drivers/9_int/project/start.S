@@ -33,7 +33,7 @@ Reset_Handler:
 
 
     /* -------------------------------------------------------------------
-        关IRQ中断，防止干扰
+        关全局中断，防止干扰
      */
     cpsid i
 
@@ -107,7 +107,9 @@ bss_loop:
 
 
     /* -------------------------------------------------------------------
-        打开IRQ中断
+        打开全局中断，
+        之后发生中断都会进入
+        外部中断处理函数：IRQ_Handler
      */
     cpsie i
 
@@ -145,8 +147,58 @@ NotUsed_Handler:
 
     /* IRQ中断服务函数 */
 IRQ_Handler:
-    ldr r0,=IRQ_Handler
-    bx r0
+    //保护现场--------------------------------------------------------------------------
+    push {lr}           //保存lr
+    push {r0-r3,r12}    //保存r0-r3,r12
+
+    mrs r0,spsr         //保存spsr
+    push {r0}     
+    
+    //配置基地址寄存器 CBAR/-------------------------------------------------------------
+    //取得GIC控制器组的基址 
+    //通过GIC基址+0x2000取得cpu interface基址，存入R1=CPU Interface基址
+    //通过cpu interface基址+0x0c取得GICC_IAR的值,存入R0=GICC_IAR的值
+    mrc p15,4,r1,c15,c0,0    //读取CP15的CBAR
+
+    add r1,r1,#0x2000   //GIC基址+偏移，得到CPU interface基址
+    ldr r0,[r1,#0x0c]   //CPU interface基址+偏移，得到GICC_IAR的值
+
+    //GICC_IAR中保存有中断ID，与CPU内核ID
+    push {r0,r1}        //保存CPU interface基址、GICC_IAR的值
+
+
+
+    //当程序IRQ中断服务函数时，CPU即工作在IRQ运行模式下-----------------------------------
+    //切换工作模式至SVC
+    //调用C语言函数：system_irqhandler，R0=GICC_IAR的值传参
+    cps #0x13           //切换SVC模式，允许其他中断
+
+    push {lr}           //保存lr寄存器
+    ldr r2, = system_irqhandler //加载C语言IRQ中断处理函数
+    blx r2              //跳转到C语言IRQ中断处理函数
+                        //并带有一个参数：GICC_IAR的值
+                        //r0传参，此时r0=GICC_IAR的值
+
+    //system_irqhandler执行完毕---------------------------------------------------------
+    //反向还原，遇PUSH就pop
+    pop {lr}            //还原LR
+    cps #0x12           //切回IRQ运行模式
+
+    //还原r0,r1
+    pop {r0,r1}         //R0=GICC_IAR的值，R1=CPU interface基址
+    str r0,[r1,0x10]    //将R0的值写入GICC_EOIR（中断结束寄存器）
+                        //GICC_EOIR中的EOINTID对应INTID
+    
+
+    pop {r0}            //还原spsr
+    msr spsr_cxsf,r0    //不明白为什么是spsr_cxsf??
+
+    pop {r0-r3,r12}
+    pop {lr}            //ARM三级流水线：取指、译指、执行
+                        //pc=当前指令地址+8
+                        //lr------>执行
+    subs pc,lr,#4       //lr-4赋值给pc
+                        //pc------>译指，正确的下条指令
 
     /* FIQ中断服务函数 */
 FIQ_Handler:
