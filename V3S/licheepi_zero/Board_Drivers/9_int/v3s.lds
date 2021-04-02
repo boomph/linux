@@ -1,6 +1,8 @@
 SECTIONS{
     . = 0x41000000;
 
+
+
     .text :
     {
         obj/start.o
