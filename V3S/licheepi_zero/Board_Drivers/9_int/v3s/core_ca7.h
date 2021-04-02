@@ -3,6 +3,17 @@
 
 #include "v3s_gic.h"
 
+
+
+#define FORCEDINLINE  __attribute__((always_inline))
+#define __ASM            __asm                         	/* GNU C语言内嵌汇编关键字 */ 
+#define __INLINE         inline                      	/* GNU内联关键字 */             
+#define __STATIC_INLINE  static inline	
+
+#define __STRINGIFY(x) #x
+
+
+
 /* C语言实现MCR指令 */
 #define __MCR(coproc, opcode_1, src, CRn, CRm, opcode_2)                          \
     __ASM volatile ("MCR " __STRINGIFY(p##coproc) ", " __STRINGIFY(opcode_1) ", " \
@@ -11,7 +22,7 @@
                     : : "r" (src) )
 
 /* C语言实现MRC指令 */                    
-__STATIC_INLINE uint32_t __MRC(coproc, opcode_1, CRn, CRm, opcode_2)                               
+FORCEDINLINE __STATIC_INLINE uint32_t __MRC(coproc, opcode_1, CRn, CRm, opcode_2)                               
 {                                                                              
     uint32_t __dst;                                                               
     __ASM volatile ("MRC " __STRINGIFY(p##coproc) ", " __STRINGIFY(opcode_1) ", " \
@@ -22,12 +33,12 @@ __STATIC_INLINE uint32_t __MRC(coproc, opcode_1, CRn, CRm, opcode_2)
 }
 
 /* 其他一些C语言内嵌汇编 */  
-__STATIC_INLINE void __set_APSR(uint32_t apsr)
+FORCEDINLINE __STATIC_INLINE void __set_APSR(uint32_t apsr)
 {
   __ASM volatile ("MSR apsr, %0" : : "r" (apsr) : "cc");
 }
 
-__STATIC_INLINE uint32_t __get_CPSR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_CPSR(void)
 {
   uint32_t result;
 
@@ -35,12 +46,12 @@ __STATIC_INLINE uint32_t __get_CPSR(void)
   return(result);
 }
 
-__STATIC_INLINE void __set_CPSR(uint32_t cpsr)
+FORCEDINLINE __STATIC_INLINE void __set_CPSR(uint32_t cpsr)
 {
   __ASM volatile ("MSR cpsr, %0" : : "r" (cpsr) : "cc");
 }
 
-__STATIC_INLINE uint32_t __get_FPEXC(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_FPEXC(void)
 {
   uint32_t result;
 
@@ -48,7 +59,7 @@ __STATIC_INLINE uint32_t __get_FPEXC(void)
   return result;
 }
 
-__STATIC_INLINE void __set_FPEXC(uint32_t fpexc)
+FORCEDINLINE __STATIC_INLINE void __set_FPEXC(uint32_t fpexc)
 {
   __ASM volatile ("VMSR fpexc, %0" : : "r" (fpexc));
 }
@@ -369,147 +380,147 @@ typedef union
  *       			CP15 访问函数
  ******************************************************************************/
 
-__STATIC_INLINE uint32_t __get_SCTLR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_SCTLR(void)
 {
   return __MRC(15, 0, 1, 0, 0);
 }
 
-__STATIC_INLINE void __set_SCTLR(uint32_t sctlr)
+FORCEDINLINE __STATIC_INLINE void __set_SCTLR(uint32_t sctlr)
 {
   __MCR(15, 0, sctlr, 1, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_ACTLR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_ACTLR(void)
 {
   return __MRC(15, 0, 1, 0, 1);
 }
 
-__STATIC_INLINE void __set_ACTLR(uint32_t actlr)
+FORCEDINLINE __STATIC_INLINE void __set_ACTLR(uint32_t actlr)
 {
   __MCR(15, 0, actlr, 1, 0, 1);
 }
 
-__STATIC_INLINE uint32_t __get_CPACR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_CPACR(void)
 {
   return __MRC(15, 0, 1, 0, 2);
 }
 
-__STATIC_INLINE void __set_CPACR(uint32_t cpacr)
+FORCEDINLINE __STATIC_INLINE void __set_CPACR(uint32_t cpacr)
 {
   __MCR(15, 0, cpacr, 1, 0, 2);
 }
 
-__STATIC_INLINE uint32_t __get_TTBR0(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_TTBR0(void)
 {
   return __MRC(15, 0, 2, 0, 0);
 }
 
-__STATIC_INLINE void __set_TTBR0(uint32_t ttbr0)
+FORCEDINLINE __STATIC_INLINE void __set_TTBR0(uint32_t ttbr0)
 {
   __MCR(15, 0, ttbr0, 2, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_TTBR1(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_TTBR1(void)
 {
   return __MRC(15, 0, 2, 0, 1);
 }
 
-__STATIC_INLINE void __set_TTBR1(uint32_t ttbr1)
+FORCEDINLINE __STATIC_INLINE void __set_TTBR1(uint32_t ttbr1)
 {
   __MCR(15, 0, ttbr1, 2, 0, 1);
 }
 
-__STATIC_INLINE uint32_t __get_TTBCR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_TTBCR(void)
 {
   return __MRC(15, 0, 2, 0, 2);
 }
 
-__STATIC_INLINE void __set_TTBCR(uint32_t ttbcr)
+FORCEDINLINE __STATIC_INLINE void __set_TTBCR(uint32_t ttbcr)
 {
   __MCR(15, 0, ttbcr, 2, 0, 2);
 }
 
-__STATIC_INLINE uint32_t __get_DACR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_DACR(void)
 {
   return __MRC(15, 0, 3, 0, 0);
 }
 
-__STATIC_INLINE void __set_DACR(uint32_t dacr)
+FORCEDINLINE __STATIC_INLINE void __set_DACR(uint32_t dacr)
 {
   __MCR(15, 0, dacr, 3, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_DFSR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_DFSR(void)
 {
   return __MRC(15, 0, 5, 0, 0);
 }
 
-__STATIC_INLINE void __set_DFSR(uint32_t dfsr)
+FORCEDINLINE __STATIC_INLINE void __set_DFSR(uint32_t dfsr)
 {
   __MCR(15, 0, dfsr, 5, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_IFSR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_IFSR(void)
 {
   return __MRC(15, 0, 5, 0, 1);
 }
 
-__STATIC_INLINE void __set_IFSR(uint32_t ifsr)
+FORCEDINLINE __STATIC_INLINE void __set_IFSR(uint32_t ifsr)
 {
   __MCR(15, 0, ifsr, 5, 0, 1);
 }
 
-__STATIC_INLINE uint32_t __get_DFAR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_DFAR(void)
 {
   return __MRC(15, 0, 6, 0, 0);
 }
 
-__STATIC_INLINE void __set_DFAR(uint32_t dfar)
+FORCEDINLINE __STATIC_INLINE void __set_DFAR(uint32_t dfar)
 {
   __MCR(15, 0, dfar, 6, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_IFAR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_IFAR(void)
 {
   return __MRC(15, 0, 6, 0, 2);
 }
 
-__STATIC_INLINE void __set_IFAR(uint32_t ifar)
+FORCEDINLINE __STATIC_INLINE void __set_IFAR(uint32_t ifar)
 {
   __MCR(15, 0, ifar, 6, 0, 2);
 }
 
-__STATIC_INLINE uint32_t __get_VBAR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_VBAR(void)
 {
   return __MRC(15, 0, 12, 0, 0);
 }
 
-__STATIC_INLINE void __set_VBAR(uint32_t vbar)
+FORCEDINLINE __STATIC_INLINE void __set_VBAR(uint32_t vbar)
 {
   __MCR(15, 0, vbar, 12, 0, 0);
 }
 
-__STATIC_INLINE uint32_t __get_ISR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_ISR(void)
 {
   return __MRC(15, 0, 12, 1, 0);
 }
 
-__STATIC_INLINE void __set_ISR(uint32_t isr)
+FORCEDINLINE __STATIC_INLINE void __set_ISR(uint32_t isr)
 {
   __MCR(15, 0, isr, 12, 1, 0);
 }
 
-__STATIC_INLINE uint32_t __get_CONTEXTIDR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_CONTEXTIDR(void)
 {
   return __MRC(15, 0, 13, 0, 1);
 }
 
-__STATIC_INLINE void __set_CONTEXTIDR(uint32_t contextidr)
+FORCEDINLINE __STATIC_INLINE void __set_CONTEXTIDR(uint32_t contextidr)
 {
   __MCR(15, 0, contextidr, 13, 0, 1);
 }
 
-__STATIC_INLINE uint32_t __get_CBAR(void)
+FORCEDINLINE __STATIC_INLINE uint32_t __get_CBAR(void)
 {
   return __MRC(15, 4, 15, 0, 0);
 }
@@ -597,7 +608,7 @@ typedef struct
  * GIC初始化
  * 为了简单使用GIC的group0
  */
-__STATIC_INLINE void GIC_Init(void)
+FORCEDINLINE __STATIC_INLINE void GIC_Init(void)
 {
   uint32_t i;
   uint32_t irqRegs;
@@ -627,7 +638,7 @@ __STATIC_INLINE void GIC_Init(void)
 /*  
  * 使能指定的中断
  */
-__STATIC_INLINE void GIC_EnableIRQ(IRQn_Type IRQn)
+FORCEDINLINE __STATIC_INLINE void GIC_EnableIRQ(IRQn_Type IRQn)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	gic->D_ISENABLER[((uint32_t)(int32_t)IRQn) >> 5] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
@@ -637,7 +648,7 @@ __STATIC_INLINE void GIC_EnableIRQ(IRQn_Type IRQn)
  * 关闭指定的中断
  */
 
-__STATIC_INLINE void GIC_DisableIRQ(IRQn_Type IRQn)
+FORCEDINLINE __STATIC_INLINE void GIC_DisableIRQ(IRQn_Type IRQn)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	gic->D_ICENABLER[((uint32_t)(int32_t)IRQn) >> 5] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
@@ -646,7 +657,7 @@ __STATIC_INLINE void GIC_DisableIRQ(IRQn_Type IRQn)
 /* 
  * 返回中断号 
  */
-__STATIC_INLINE uint32_t GIC_AcknowledgeIRQ(void)
+FORCEDINLINE __STATIC_INLINE uint32_t GIC_AcknowledgeIRQ(void)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	return gic->C_IAR & 0x1FFFUL;
@@ -655,7 +666,7 @@ __STATIC_INLINE uint32_t GIC_AcknowledgeIRQ(void)
 /* 
  * 向EOIR写入发送中断的中断号来释放中断
  */
-__STATIC_INLINE void GIC_DeactivateIRQ(uint32_t value)
+FORCEDINLINE __STATIC_INLINE void GIC_DeactivateIRQ(uint32_t value)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	gic->C_EOIR = value;
@@ -664,7 +675,7 @@ __STATIC_INLINE void GIC_DeactivateIRQ(uint32_t value)
 /*
  * 获取运行优先级
  */
-__STATIC_INLINE uint32_t GIC_GetRunningPriority(void)
+FORCEDINLINE __STATIC_INLINE uint32_t GIC_GetRunningPriority(void)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	return gic->C_RPR & 0xFFUL;
@@ -673,7 +684,7 @@ __STATIC_INLINE uint32_t GIC_GetRunningPriority(void)
 /*
  * 设置组优先级
  */
-__STATIC_INLINE void GIC_SetPriorityGrouping(uint32_t PriorityGroup)
+FORCEDINLINE __STATIC_INLINE void GIC_SetPriorityGrouping(uint32_t PriorityGroup)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	gic->C_BPR = PriorityGroup & 0x7UL;
@@ -682,7 +693,7 @@ __STATIC_INLINE void GIC_SetPriorityGrouping(uint32_t PriorityGroup)
 /*
  * 获取组优先级
  */
-__STATIC_INLINE uint32_t GIC_GetPriorityGrouping(void)
+FORCEDINLINE __STATIC_INLINE uint32_t GIC_GetPriorityGrouping(void)
 {
   GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
 
@@ -692,7 +703,7 @@ __STATIC_INLINE uint32_t GIC_GetPriorityGrouping(void)
 /*
  * 设置优先级
  */
-__STATIC_INLINE void GIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
+FORCEDINLINE __STATIC_INLINE void GIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
 {
   	GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   	gic->D_IPRIORITYR[((uint32_t)(int32_t)IRQn)] = (uint8_t)((priority << (8UL - __GIC_PRIO_BITS)) & (uint32_t)0xFFUL);
@@ -701,7 +712,7 @@ __STATIC_INLINE void GIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
 /*
  * 获取优先级
  */
-__STATIC_INLINE uint32_t GIC_GetPriority(IRQn_Type IRQn)
+FORCEDINLINE __STATIC_INLINE uint32_t GIC_GetPriority(IRQn_Type IRQn)
 {
   GIC_Type *gic = (GIC_Type *)(__get_CBAR() & 0xFFFF0000UL);
   return(((uint32_t)gic->D_IPRIORITYR[((uint32_t)(int32_t)IRQn)] >> (8UL - __GIC_PRIO_BITS)));

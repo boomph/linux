@@ -2,10 +2,13 @@
 #include "bsp_gpio.h"
 #include "bsp_clk.h"
 #include "bsp_delay.h"
+#include "bsp_int.h"
 
 
 int main(void){
     char led = 1;
+
+    v3s_int_init();
 
     //配置主频
     v3s_clk_init();

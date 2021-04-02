@@ -193,5 +193,18 @@ typedef enum IRQn {
  * @}
  */ /* end of group Cortex_Core_Configuration */
 
+
+
+/* 中断处理函数 原型*/
+typedef void (*system_irq_handler_t)(unsigned int gicc_iar,void* param);
+
+/* 中断处理结构 */
+typedef struct _system_irq_handle
+{
+    system_irq_handler_t irqHandler;        //中断处理函数
+    void* userParam;                        //中断处理函数参数
+}system_irq_handle_t;
+
+
  
 #endif //__V3S_GIC_H

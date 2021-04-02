@@ -2,7 +2,7 @@
 
 PIO_Map *PIO = NULL;
 
-void GPIO_Init(PIO_PORT port, unsigned int pin, PIN_MODE mode, PIN_DRV drv, PIN_PUL pul)
+void GPIO_Init(PIO_PORT port, unsigned int pin, PIO_MODE mode, PIO_DRV drv, PIO_PULL pul)
 {    
     PIO = (PIO_Map*)PIO_BASE_ADDRESS;             //结构指向基地址
 

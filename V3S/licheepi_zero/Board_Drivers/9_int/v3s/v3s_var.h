@@ -7,21 +7,18 @@
 #define     __I     volatile 
 #define     __O     volatile 
 #define     __IO    volatile
+#define     __IM     volatile const      /* 只读 */
+#define     __OM     volatile            /* 只写 */
+#define     __IOM    volatile            /* 读写 */
+
 
 #define ON 		1
 #define OFF		0
 
+#define Disable 0
+#define Enable  1
+
 #define NULL 0
-
-#define __ASM            __asm                         	/* GNU C语言内嵌汇编关键字 */ 
-#define __INLINE         inline                      	/* GNU内联关键字 */             
-#define __STATIC_INLINE  static inline					
-
-
-#define     __IM     volatile const      /* 只读 */
-#define     __OM     volatile            /* 只写 */
-#define     __IOM    volatile            /* 读写 */
-#define __STRINGIFY(x) #x
 
 
 typedef   signed          char int8_t;
