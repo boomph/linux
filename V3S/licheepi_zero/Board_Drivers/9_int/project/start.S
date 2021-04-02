@@ -2,13 +2,7 @@
 .global _bss_start
 .global _bss_end
 
-_bss_start:
-    .word __bss_start
-
-_bss_end:
-    .word __bss_end
-
-    
+   
 _start:
     /* ********************************************************************
         中断向量表 
@@ -63,6 +57,12 @@ Reset_Handler:
     isb
 
 
+_bss_start:
+    .word __bss_start
+
+_bss_end:
+    .word __bss_end
+    
     /* -------------------------------------------------------------------
         清 bss 段 
     */

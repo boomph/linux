@@ -22,15 +22,15 @@
                     : : "r" (src) )
 
 /* C语言实现MRC指令 */                    
-FORCEDINLINE __STATIC_INLINE uint32_t __MRC(coproc, opcode_1, CRn, CRm, opcode_2)                               
-{                                                                              
-    uint32_t __dst;                                                               
+#define __MRC(coproc, opcode_1, CRn, CRm, opcode_2)                               \
+  ({                                                                              \
+    uint32_t __dst;                                                               \
     __ASM volatile ("MRC " __STRINGIFY(p##coproc) ", " __STRINGIFY(opcode_1) ", " \
                     "%0, " __STRINGIFY(c##CRn) ", " __STRINGIFY(c##CRm) ", "      \
                     __STRINGIFY(opcode_2)                                         \
-                    : "=r" (__dst) );                                             
-    return (__dst);                                                                        
-}
+                    : "=r" (__dst) );                                             \
+    __dst;                                                                        \
+  })
 
 /* 其他一些C语言内嵌汇编 */  
 FORCEDINLINE __STATIC_INLINE void __set_APSR(uint32_t apsr)

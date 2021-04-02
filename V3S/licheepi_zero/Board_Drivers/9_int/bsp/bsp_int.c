@@ -55,8 +55,6 @@ void v3s_int_init(void)
 
     //中断处理结构表初始化
     system_irqtable_init();
-
-    //注册中断处理函数
     
 }
 

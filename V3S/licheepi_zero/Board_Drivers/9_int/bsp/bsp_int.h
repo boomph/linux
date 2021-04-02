@@ -12,6 +12,9 @@ void system_register_irqHandler(IRQn_Type irq,
 /* 默认中断处理函数 */
 void default_irqHandler(unsigned int gicc_iar,void* userParam);
 
+/* PB 外部中断处理函数 */
+void PB_EINT_irqHandler(unsigned int gicc_iar,void* userParm);
+
 void v3s_int_init(void);    //中断初始化函数，必须放在代码最前面
 
 void system_irqhandler(unsigned int gicc_iar);

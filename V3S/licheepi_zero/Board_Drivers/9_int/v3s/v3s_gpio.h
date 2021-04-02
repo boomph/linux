@@ -33,6 +33,9 @@ typedef enum {
     PIO_MODE_IN = 0x00,
     PIO_MODE_OUT = 0x01,
     PIO_MODE_AUX = 0x02,
+    PIO_MODE_RESV1 = 0x03,
+    PIO_MODE_RESV2 = 0x04,
+    PIO_MODE_RESV3 = 0x05,
     PIO_MODE_INT = 0x06,
     PIO_MODE_DISABLE = 0x07,
 }PIO_MODE;
@@ -57,38 +60,43 @@ typedef enum{
 /*----------------------------------------------------------
      gpio 外部中断 
 */
-//GPIO 中断结构体
+/*
+    GPIO 中断结构体 
+    大小 = 0x20
+    地址 = 基址 + 0x200 + 0x20*n
+*/
 typedef struct{
-    volatile unsigned int INT_CFG[4];
-    volatile unsigned int INT_CTL;
-    volatile unsigned int INT_STA;
-    volatile unsigned int INT_DEB;
-}PIO_INT_Struct;
+    volatile unsigned int EINT_CFG[4];
+    volatile unsigned int EINT_CTL;
+    volatile unsigned int EINT_STA;
+    volatile unsigned int EINT_DEB;
+    volatile unsigned int EINT_RESV;//保留
+}PIO_EINT_Struct;
 
 //GPIO 中断映射体
 typedef struct {
-    volatile PIO_INT_Struct Pn[7];
-}PIO_INT_Map;
+    volatile PIO_EINT_Struct Pn[7];
+}PIO_EINT_Map;
 
 /*
     GPIO 中断触发方式
     External INTn Mode 
 */
 typedef enum{
-    PIO_POSITIVE_EDGE   = 0X0,
-    PIO_NEGATIVE_EDGE   = 0X1,
-    PIO_HIGH_LEVEL      = 0X2,
-    PIO_LOW_LEVEL       = 0X3,
-    PIO_DOUBLE_EDGE     = 0X4,    
-}PIO_EINT_CFG;
+    PIO_EINT_MODE_POSITIVE_EDGE   = 0X0,
+    PIO_EINT_MODE_NEGATIVE_EDGE   = 0X1,
+    PIO_EINT_MODE_HIGH_LEVEL      = 0X2,
+    PIO_EINT_MODE_LOW_LEVEL       = 0X3,
+    PIO_EINT_MODE_DOUBLE_EDGE     = 0X4,    
+}PIO_EINT_MODE;
 
 /*
     GPIO 中断使能
     External INTn Enable (n = 0~9)
 */
 typedef enum{
-    PIO_INT_Disable         = 0,
-    PIO_INT_Enable          = 1,
+    PIO_EINT_CMD_Disable         = 0,
+    PIO_EINT_CMD_Enable          = 1,
 }PIO_EINT_CMD;
 
 /**
@@ -96,20 +104,28 @@ typedef enum{
     External INTn Pending Bit (n = 0~9)
 */
 typedef enum{
-    PIO_No_IRQ_Pending      = 0,
-    PIO_IRQ_Pending         = 1,
+    PIO_EINT_STATUS_No_IRQ_Pending      = 0,
+    PIO_EINT_STATUS_IRQ_Pending         = 1,
 }PIO_EINT_STATUS;
 
 /* 
-    GPIO 中断消抖时钟源
-    BIT 6-4 : DEB_CLK_PRE_SCALE
-    Debounce Clock Pre-scale n
-    The selected clock source is prescaled by 2^n
+    GPIO PIO_INT_CLK_SELECT 中断时钟源选择
+    PIO Interrupt Clock Select
+    
+    注：
+        中断消抖时钟源     BIT 6-4 : DEB_CLK_PRE_SCALE
+        Debounce Clock Pre-scale n
+        The selected clock source is prescaled by 2^n
+
+        推测--------------------------------------------------------
+        以32.768khz晶振为例：
+            1/32768 ≈ 0.03052ms
+            DEB_CLK_PRE_SCALE n = 7 => 2^7 * 0.03052ms = 3.90656ms消抖
 */
 typedef enum{
-    PIO_INT_DEB_LOSC_32KHZ      = 0,
-    PIO_INT_DEB_HOSC_24MHZ      = 1,
-}PIO_INT_DEB_CLK_SELECT;
+    PIO_EINT_DEB_LOSC_32KHZ      = 0,
+    PIO_EINT_DEB_HOSC_24MHZ      = 1,
+}PIO_EINT_DEB_CLK_SELECT;
 
 
 #endif //__V3S_GPIO_H

@@ -1,6 +1,7 @@
 #include "bsp_gpio.h"
 
-PIO_Map *PIO = NULL;
+PIO_Map         *PIO = NULL;
+PIO_EINT_Map     *PIO_Int = NULL;
 
 void GPIO_Init(PIO_PORT port, unsigned int pin, PIO_MODE mode, PIO_DRV drv, PIO_PULL pul)
 {    
@@ -74,4 +75,110 @@ unsigned int GPIO_GetPinData(PIO_PORT port, unsigned int pin){
         return 1;
     else
         return 0;
+}
+
+
+
+/**
+ *  GPIO 外部中断 初始化
+port: port
+pin:pin
+mode:触发方式
+Deb_Clk_Select:消抖时钟源
+Deb_Clk_Pre_Scale:Deb_Clk_Pre_Scale */
+void GPIO_EINT_Init(PIO_PORT port,
+                    unsigned int pin,
+                    PIO_EINT_MODE mode,
+                    PIO_EINT_DEB_CLK_SELECT Deb_Clk_Select,
+                    unsigned int Deb_Clk_Pre_Scale)
+{
+    //地址映射= 基地址+偏移
+    PIO_Int = (PIO_EINT_Map*)(PIO_BASE_ADDRESS + 0x200 + 0x20*0);
+
+    /* 
+        配置GPIO复用功能 :
+        确定 CFG索引号
+        以PIN7为例，7/8 = 0，即CFG[索引]=0 
+    */
+    int cfgIndex = pin / 8 ;      
+
+
+    /* 
+        PIO_EINT_MODE:配置触发模式--------------------------------------------------------------------------
+        4i+3 ---- 4i
+        以PIN7为例，4*(7%8)+3----4*(7%8) = 31-28 位 ,即左移28位，清除4位，再置位
+    */
+    PIO_Int->Pn[port].EINT_CFG[cfgIndex] &= ~(((unsigned int)0x0f) << ((pin % 8) * 4));
+    PIO_Int->Pn[port].EINT_CFG[cfgIndex] |= (((unsigned int)mode) << ((pin % 8) * 4));
+
+    /*
+        设置中断时钟源选择，设置消抖pre_scale = 2^n---------------------------------------------------------
+    */
+    //6:4 R/W 0 DEB_CLK_PRE_SCALE 设置 2^(0-7)消抖周期
+    PIO_Int->Pn[port].EINT_DEB &= ~(((unsigned int)0x07) << 4);
+    PIO_Int->Pn[port].EINT_DEB |= ((Deb_Clk_Pre_Scale & 0x07) << 4);
+
+    //PIO Interrupt Clock Select 设置 消抖时钟源
+    PIO_Int->Pn[port].EINT_DEB &= ~(((unsigned int)0x01) << 0);
+    PIO_Int->Pn[port].EINT_DEB |= (((unsigned int)Deb_Clk_Select) << 0);
+
+
+    /* PB_EINT_STATUS_REG pin对应的状态位 置0-----------------------------------------------------------------
+    */
+    PIO_Int->Pn[port].EINT_STA &= ~(((unsigned int)0x01) << pin);
+
+    /*PB_EINT_CTL_REG 开pin对应的使能位---------------------------------------------------------------------
+    */
+    PIO_Int->Pn[port].EINT_CTL |= (((unsigned int)0x01) << pin);
+}
+
+
+/* GPIO外部中断全能 */
+void GPIO_EINT_CMD(PIO_PORT port,unsigned int pin,unsigned int cmd)
+{
+    if(PIO_Int == NULL)
+        return;
+
+    if(cmd)
+    {
+        PIO_Int->Pn[port].EINT_CTL |= (((unsigned int)0x01) << pin);
+    }
+    else
+    {
+        PIO_Int->Pn[port].EINT_CTL &= ~(((unsigned int)0x01) << pin);
+    }
+}
+
+
+/* GPIO 读取指定pin中断状态 */
+unsigned int GPIO_EINT_GetStatus(PIO_PORT port,unsigned int pin)
+{
+    if(PIO_Int == NULL)
+        return 0;
+
+    if(PIO_Int->Pn[port].EINT_STA & (((unsigned int)0x01) << pin))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+/* GPIO 清除中断位 */
+void GPIO_EINT_Clean(PIO_PORT port,unsigned int pin)
+{
+    if(PIO_Int == NULL)
+        return;
+
+    /* EINT_STATUS
+    External INTn Pending Bit (n = 0~9)
+    0: No IRQ pending
+    1: IRQ pending
+    Write ‘1’ to clear it */
+    if(PIO_Int->Pn[port].EINT_STA & (((unsigned int)0x01) << pin))
+    {
+        PIO_Int->Pn[port].EINT_STA |= (((unsigned int)0x01) << pin);
+    }
 }
