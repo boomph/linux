@@ -3,8 +3,12 @@
 //记录当前中断嵌套
 static unsigned int irqNesting=0;
 
+
 /* 中断处理结构表 */
 static system_irq_handle_t             irqTable[NUMBER_OF_INT_VECTORS];
+
+
+char led = 0;
 
 /* 初始化中断处理结构表*/
 void system_irqtable_init(void)
@@ -16,8 +20,7 @@ void system_irqtable_init(void)
 
     for(i=0;i<NUMBER_OF_INT_VECTORS;i++)
     {
-        irqTable[i].irqHandler  = default_irqHandler;
-        irqTable[i].userParam   = NULL;
+        system_register_irqHandler((IRQn_Type)i,default_irqHandler,NULL);
     }
 }
 
@@ -61,7 +64,8 @@ void v3s_int_init(void)
 /* 具体的中断处理函数，IRQ_Handler会调用此函数 */
 void system_irqhandler(unsigned int gicc_iar)
 {
-    unsigned int intNum = gicc_iar & 0x03ff;
+    led=0;
+    unsigned int intNum = gicc_iar & 0x03FFUL;
 
     /* 
         检查中断ID 
@@ -72,13 +76,17 @@ void system_irqhandler(unsigned int gicc_iar)
         return;
     }
 
+    
+    
+#if 0
     //中断嵌套计数+1
     irqNesting++;
 
     /* 根据中断ID号，读取中断处理函数，然后执行 */
-    irqTable[intNum].irqHandler(gicc_iar,irqTable[intNum].userParam);
+    irqTable[intNum].irqHandler(intNum,irqTable[intNum].userParam);
 
     //中断嵌套计数-1
     irqNesting--;
+#endif
 }
 

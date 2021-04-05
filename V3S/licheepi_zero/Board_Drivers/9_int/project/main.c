@@ -4,18 +4,12 @@
 #include "bsp_delay.h"
 #include "bsp_int.h"
 
-char led = 0;
+//char led = 0;
 
 void MyPB2_IRQHandler(unsigned int gicc_iar,void* param)
 {
-    if(led)
-    {
-        led=0;
-    }
-    else
-    {
-        led=1;
-    }
+    led=1;
+    
     /* //检测PB0中断状态
     if(GPIO_EINT_GetStatus(PIO_PORT_B,2))
     {
@@ -37,7 +31,7 @@ int main(void){
     //V3S中断初始化
     v3s_int_init();
     //注册中断处理函数
-    system_register_irqHandler(PB_EINT_IRQn,MyPB2_IRQHandler,NULL);
+    system_register_irqHandler(PB_EINT_IRQn,(system_irq_handler_t)MyPB2_IRQHandler,NULL);
 
 
     //配置主频
@@ -55,7 +49,7 @@ int main(void){
     GPIO_EINT_CMD(PIO_PORT_B,2,1);
     GPIO_EINT_Clean(PIO_PORT_B,2);
     
-    
+    led=1;
 
     while(1)
     {
