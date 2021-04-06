@@ -6,11 +6,11 @@
 
 //char led = 0;
 
+
+
 void MyPB2_IRQHandler(unsigned int gicc_iar,void* param)
 {
-    led=1;
-    
-    /* //检测PB0中断状态
+    //检测PB0中断状态
     if(GPIO_EINT_GetStatus(PIO_PORT_B,2))
     {
         if(led)
@@ -23,10 +23,11 @@ void MyPB2_IRQHandler(unsigned int gicc_iar,void* param)
         }
         //清PB0中断状态
         GPIO_EINT_Clean(PIO_PORT_B,2);
-    } */
+    } 
 }
 
 int main(void){
+    //PLL_STRUCT* PLL2 = (PLL_STRUCT*)CCU_BASE_ADDRESS;
 
     //V3S中断初始化
     v3s_int_init();
@@ -41,13 +42,18 @@ int main(void){
     GPIO_Init(PIO_PORT_B,3,PIO_MODE_OUT,PIO_DRV_LEVEL1,PIO_PULL_DISABLE);
     
     //INIT PB2 中断模式,上拉
-    GPIO_Init(PIO_PORT_B,2,PIO_MODE_INT,PIO_DRV_LEVEL1,PIO_PULL_UP);
+    GPIO_Init(PIO_PORT_B,2,PIO_MODE_INT,PIO_DRV_LEVEL0,PIO_PULL_UP);
 
     
+    
     //GPIO外部中断初始化
-    GPIO_EINT_Init(PIO_PORT_B,2,PIO_EINT_MODE_NEGATIVE_EDGE,PIO_EINT_DEB_LOSC_32KHZ,7);
-    GPIO_EINT_CMD(PIO_PORT_B,2,1);
-    GPIO_EINT_Clean(PIO_PORT_B,2);
+    GPIO_EINT_Init(PIO_PORT_B,2,PIO_EINT_MODE_NEGATIVE_EDGE,PIO_EINT_DEB_LOSC_32KHZ,5);
+
+    GIC_EnableIRQ(PB_EINT_IRQn);
+    //PLL2->BUS_CLK_GATING_REG2 |= (0x01<<5);//使能 PIO 时钟
+    //GPIO_EINT_CMD(PIO_PORT_B,2,1);
+    //GPIO_EINT_Clean(PIO_PORT_B,2);
+    
     
     led=1;
 

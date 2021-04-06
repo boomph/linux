@@ -6,10 +6,10 @@ LD				:= ${CROSS_COMPILE}ld
 OBJCOPY			:= ${CROSS_COMPILE}objcopy
 OBJDUMP			:= ${CROSS_COMPILE}objdump
 
-OBJS			:= starts.o main.o v3s_gpio.o
+OBJS			:= start.o main.o v3s_gpio.o
 
 ${NAME}.bin : ${OBJS}
-	${CC} -Tv3s.lds -o ${NAME}.elf $^
+	${LD} -Tv3s.lds -o ${NAME}.elf $^
 	${OBJCOPY} -O binary -S ${NAME}.elf $@
 	${OBJDUMP} -D -m arm ${NAME}.elf > ${NAME}.dis
 

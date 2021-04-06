@@ -93,7 +93,7 @@ void GPIO_EINT_Init(PIO_PORT port,
                     unsigned int Deb_Clk_Pre_Scale)
 {
     //地址映射= 基地址+偏移
-    PIO_Int = (PIO_EINT_Map*)(PIO_BASE_ADDRESS + 0x200 + 0x20*0);
+    PIO_Int = (PIO_EINT_Map*)(PIO_BASE_ADDRESS + 0x200 );
 
     /* 
         配置GPIO复用功能 :
@@ -125,7 +125,7 @@ void GPIO_EINT_Init(PIO_PORT port,
 
     /* PB_EINT_STATUS_REG pin对应的状态位 置0-----------------------------------------------------------------
     */
-    PIO_Int->Pn[port].EINT_STA &= ~(((unsigned int)0x01) << pin);
+    //PIO_Int->Pn[port].EINT_STA &= ~(((unsigned int)0x01) << pin);
 
     /*PB_EINT_CTL_REG 开pin对应的使能位---------------------------------------------------------------------
     */

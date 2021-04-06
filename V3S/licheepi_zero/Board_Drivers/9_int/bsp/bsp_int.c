@@ -50,11 +50,11 @@ void default_irqHandler(unsigned int gicc_iar,void* userParam)
 void v3s_int_init(void)
 {
     //GIC中断控制器初始化
-    GIC_Init();
+    //GIC_Init();
 
     //设置中断偏移，也可以在start.S-->reset_handler中设置
     //我选择在reset_handler中设置
-    //__set_VBAR(0x41000000);
+    __set_VBAR(0x41000000);
 
     //中断处理结构表初始化
     system_irqtable_init();
@@ -64,7 +64,7 @@ void v3s_int_init(void)
 /* 具体的中断处理函数，IRQ_Handler会调用此函数 */
 void system_irqhandler(unsigned int gicc_iar)
 {
-    led=0;
+   
     unsigned int intNum = gicc_iar & 0x03FFUL;
 
     /* 
@@ -77,8 +77,7 @@ void system_irqhandler(unsigned int gicc_iar)
     }
 
     
-    
-#if 0
+
     //中断嵌套计数+1
     irqNesting++;
 
@@ -87,6 +86,6 @@ void system_irqhandler(unsigned int gicc_iar)
 
     //中断嵌套计数-1
     irqNesting--;
-#endif
+
 }
 

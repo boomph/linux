@@ -19,7 +19,7 @@ _start:
     // CLEAN BSS SECTION
     ldr r0,_bss_start
     ldr r1,_bss_end
-    ldr r2,#0
+    ldr r2,=#0
 bss_loop:
     stmia r0!,{r2}
     cmp r0,r1
