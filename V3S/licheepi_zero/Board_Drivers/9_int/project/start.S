@@ -20,27 +20,136 @@ Reset_Handler:
 
 	cpsid i						/* 关闭全局中断 */
 
-	/* 关闭I,DCache和MMU 
-	 * 采取读-改-写的方式。
-	 */
-	mrc     p15, 0, r0, c1, c0, 0     /* 读取CP15的C1寄存器到R0中       		        	*/
-    bic     r0,  r0, #(0x1 << 12)     /* 清除C1寄存器的bit12位(I位)，关闭I Cache            	*/
-    bic     r0,  r0, #(0x1 <<  2)     /* 清除C1寄存器的bit2(C位)，关闭D Cache    				*/
-    bic     r0,  r0, #0x2             /* 清除C1寄存器的bit1(A位)，关闭对齐						*/
-    bic     r0,  r0, #(0x1 << 11)     /* 清除C1寄存器的bit11(Z位)，关闭分支预测					*/
-    //bic     r0,  r0, #0x1             /* 清除C1寄存器的bit0(M位)，关闭MMU				       	*/
-    mcr     p15, 0, r0, c1, c0, 0     /* 将r0寄存器中的值写入到CP15的C1寄存器中	 				*/
-
+	/* Set V=0 in CP15 SCTLR register - for VBAR to point to vector */
+	mrc	p15, 0, r0, c1, c0, 0	@ Read CP15 SCTLR Register
+	bic	r0, #0x2000				@ #CR_V	(1<<13)	 V = 0
+	mcr	p15, 0, r0, c1, c0, 0	@ Write CP15 SCTLR Register
 	
 
 	/* 汇编版本设置中断向量表偏移 */
-	ldr r0, =0X41000000
-
+	ldr r0, =_start
 	dsb
 	isb
 	mcr p15, 0, r0, c12, c0, 0
 	dsb
 	isb
+
+	/*
+	 * Invalidate L1 I/D
+	 */
+	mov	r0, #0			@ set up for MCR
+	mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLBs
+	mcr	p15, 0, r0, c7, c5, 0	@ invalidate icache
+	mcr	p15, 0, r0, c7, c5, 6	@ invalidate BP array
+	mcr     p15, 0, r0, c7, c10, 4	@ DSB
+	mcr     p15, 0, r0, c7, c5, 4	@ ISB
+
+	/*
+	 * disable MMU stuff and caches
+	 */
+	mrc	p15, 0, r0, c1, c0, 0
+	bic	r0, r0, #0x00002000	@ clear bits 13 (--V-)
+	bic	r0, r0, #0x00000007	@ clear bits 2:0 (-CAM)
+	bic	r0, r0, #0x00000002	@ clear bit 1 (--A-) Align
+	bic	r0, r0, #0x00000800	@ clear bit 11 (Z---) BTB
+	bic	r0, r0, #0x00001000	@ clear bit 12 (I) I-cache
+	mcr	p15, 0, r0, c1, c0, 0
+
+
+	/* 打开MMU */
+	mrc	p15, 0, r0, c1, c0, 0
+	orr	r0, r0, #1	@ set bit 1 MMU
+	mcr	p15, 0, r0, c1, c0, 0
+	
+
+	@ /* 关闭I,DCache和MMU 
+	@  * 采取读-改-写的方式。
+	@  */
+	@ mrc     p15, 0, r0, c1, c0, 0     /* 读取CP15的C1寄存器到R0中       		        	*/
+    @ bic     r0,  r0, #(0x1 << 12)     /* 清除C1寄存器的bit12位(I位)，关闭I Cache            	*/
+    @ bic     r0,  r0, #(0x1 <<  2)     /* 清除C1寄存器的bit2(C位)，关闭D Cache    				*/
+    @ bic     r0,  r0, #0x2             /* 清除C1寄存器的bit1(A位)，关闭对齐						*/
+    @ bic     r0,  r0, #(0x1 << 11)     /* 清除C1寄存器的bit11(Z位)，关闭分支预测					*/
+    @ //bic     r0,  r0, #0x1             /* 清除C1寄存器的bit0(M位)，关闭MMU				       	*/
+    @ mcr     p15, 0, r0, c1, c0, 0     /* 将r0寄存器中的值写入到CP15的C1寄存器中	 				*/
+
+	
+
+	@ /*
+	@  * disable interrupts (FIQ and IRQ), also set the cpu to SVC32 mode,
+	@  * except if in HYP mode already
+	@  */
+	@ mrs	r0, cpsr
+	@ and	r1, r0, #0x1f		@ mask mode bits
+	@ teq	r1, #0x1a		@ test for HYP mode
+	@ bicne	r0, r0, #0x1f		@ clear all mode bits
+	@ orrne	r0, r0, #0x13		@ set SVC mode
+	@ orr	r0, r0, #0xc0		@ disable FIQ and IRQ
+	@ msr	cpsr,r0
+
+	@ /*
+	@ * Setup vector:
+	@ * (OMAP4 spl TEXT_BASE is not 32 byte aligned.
+	@ * Continue to use ROM code vector only in OMAP4 spl)
+	@ */
+	@ /* Set V=0 in CP15 SCTLR register - for VBAR to point to vector */
+	@ mrc	p15, 0, r0, c1, c0, 0	@ Read CP15 SCTLR Register
+	@ bic	r0, #0x2000				@ #CR_V	(1<<13)	 V = 0
+	@ mcr	p15, 0, r0, c1, c0, 0	@ Write CP15 SCTLR Register
+
+	@ /* Set vector address in CP15 VBAR register */
+	@ ldr	r0, =_start
+	@ mcr	p15, 0, r0, c12, c0, 0	@Set VBAR
+
+	@ /*
+	@  * Invalidate L1 I/D
+	@  */
+	@ mov	r0, #0			@ set up for MCR
+	@ mcr	p15, 0, r0, c8, c7, 0	@ invalidate TLBs
+	@ mcr	p15, 0, r0, c7, c5, 0	@ invalidate icache
+	@ mcr	p15, 0, r0, c7, c5, 6	@ invalidate BP array
+	@ mcr     p15, 0, r0, c7, c10, 4	@ DSB
+	@ mcr     p15, 0, r0, c7, c5, 4	@ ISB
+
+	@ /*
+	@  * disable MMU stuff and caches
+	@  */
+	@ mrc	p15, 0, r0, c1, c0, 0
+	@ bic	r0, r0, #0x00002000	@ clear bits 13 (--V-)
+	@ bic	r0, r0, #0x00000007	@ clear bits 2:0 (-CAM)
+	@ orr	r0, r0, #0x00000002	@ set bit 1 (--A-) Align
+	@ orr	r0, r0, #0x00000800	@ set bit 11 (Z---) BTB
+	@ bic	r0, r0, #0x00001000	@ clear bit 12 (I) I-cache
+	@ mcr	p15, 0, r0, c1, c0, 0
+
+
+	@ /* 进入IRQ模式 */
+	@ mrs r0, cpsr
+	@ bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
+	@ orr r0, r0, #0x12 	/* r0或上0x13,表示使用IRQ模式					*/
+	@ msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
+	@ ldr sp, =0x20000	/* 设置IRQ模式下的栈首地址为0X80600000,大小为2MB */
+
+	@ /* 进入SYS模式 */
+	@ mrs r0, cpsr
+	@ bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
+	@ orr r0, r0, #0x1f 	/* r0或上0x13,表示使用SYS模式					*/
+	@ msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
+	@ ldr sp, =0x18000	/* 设置SYS模式下的栈首地址为0X80400000,大小为2MB */
+
+	@ /* 进入SVC模式 */
+	@ mrs r0, cpsr
+	@ bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
+	@ orr r0, r0, #0x13 	/* r0或上0x13,表示使用SVC模式					*/
+	@ msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
+	@ ldr sp, =0X10000	/* 设置SVC模式下的栈首地址为0X80200000,大小为2MB */
+
+
+	@ /* 使能FIQ---IRQ中断 */
+	@ mrs r0, cpsr		/* 读取cpsr寄存器值到r0中 			*/
+	@ bic r0, r0, #0xc0	/* 将r0寄存器中bit7清零，也就是CPSR中的I位清零，表示允许IRQ中断 */
+	@ msr cpsr, r0		/* 将r0重新写入到cpsr中 			*/
+
 
     
 	/* 设置各个模式下的栈指针，
@@ -53,21 +162,21 @@ Reset_Handler:
 	bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
 	orr r0, r0, #0x12 	/* r0或上0x13,表示使用IRQ模式					*/
 	msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
-	ldr sp, =0x40600000	/* 设置IRQ模式下的栈首地址为0X80600000,大小为2MB */
+	ldr sp, =0x41030000	/* 设置IRQ模式下的栈首地址为0X80600000,大小为2MB */
 
 	/* 进入SYS模式 */
 	mrs r0, cpsr
 	bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
 	orr r0, r0, #0x1f 	/* r0或上0x13,表示使用SYS模式					*/
 	msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
-	ldr sp, =0x40400000	/* 设置SYS模式下的栈首地址为0X80400000,大小为2MB */
+	ldr sp, =0x41020000	/* 设置SYS模式下的栈首地址为0X80400000,大小为2MB */
 
 	/* 进入SVC模式 */
 	mrs r0, cpsr
 	bic r0, r0, #0x1f 	/* 将r0寄存器中的低5位清零，也就是cpsr的M0~M4 	*/
 	orr r0, r0, #0x13 	/* r0或上0x13,表示使用SVC模式					*/
 	msr cpsr, r0		/* 将r0 的数据写入到cpsr_c中 					*/
-	ldr sp, =0X40200000	/* 设置SVC模式下的栈首地址为0X80200000,大小为2MB */
+	ldr sp, =0x41010000	/* 设置SVC模式下的栈首地址为0X80200000,大小为2MB */
 
 	cpsie i				/* 打开全局中断 */
 #if 0

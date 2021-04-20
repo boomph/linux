@@ -66,11 +66,11 @@ typedef enum{
     地址 = 基址 + 0x200 + 0x20*n
 */
 typedef struct{
-    volatile unsigned int EINT_CFG[4];
+    volatile unsigned int EINT_CFG[3];
     volatile unsigned int EINT_CTL;
     volatile unsigned int EINT_STA;
     volatile unsigned int EINT_DEB;
-    volatile unsigned int EINT_RESV;//保留
+    //volatile unsigned int EINT_RESV;//保留
 }PIO_EINT_Struct;
 
 //GPIO 中断映射体
