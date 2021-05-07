@@ -652,6 +652,37 @@ deps_/home/royal/myGit/linux/V3S/licheepi_zero/Linux_Drivers/5_platformled/platf
   include/linux/uuid.h \
   include/uapi/linux/uuid.h \
   include/linux/cdev.h \
+  include/linux/io.h \
+    $(wildcard include/config/have/arch/huge/vmap.h) \
+    $(wildcard include/config/has/ioport/map.h) \
+    $(wildcard include/config/pci.h) \
+  arch/arm/include/asm/io.h \
+    $(wildcard include/config/need/mach/io/h.h) \
+    $(wildcard include/config/pcmcia/soc/common.h) \
+    $(wildcard include/config/isa.h) \
+    $(wildcard include/config/pccard.h) \
+  include/asm-generic/pci_iomap.h \
+    $(wildcard include/config/no/generic/pci/ioport/map.h) \
+    $(wildcard include/config/generic/pci/iomap.h) \
+  include/xen/xen.h \
+    $(wildcard include/config/xen/dom0.h) \
+    $(wildcard include/config/xen/pvh.h) \
+  include/asm-generic/io.h \
+    $(wildcard include/config/generic/iomap.h) \
+    $(wildcard include/config/virt/to/bus.h) \
+  include/linux/vmalloc.h \
+  include/linux/uaccess.h \
+  include/linux/kasan-checks.h \
+  arch/arm/include/asm/uaccess.h \
+    $(wildcard include/config/have/efficient/unaligned/access.h) \
+    $(wildcard include/config/cpu/sw/domain/pan.h) \
+    $(wildcard include/config/cpu/use/domains.h) \
+    $(wildcard include/config/uaccess/with/memcpy.h) \
+  arch/arm/include/asm/domain.h \
+    $(wildcard include/config/io/36.h) \
+    $(wildcard include/config/cpu/cp15/mmu.h) \
+  arch/arm/include/generated/asm/extable.h \
+  include/asm-generic/extable.h \
   /home/royal/myGit/linux/V3S/licheepi_zero/Linux_Drivers/5_platformled/v3s_gpio.h \
 
 /home/royal/myGit/linux/V3S/licheepi_zero/Linux_Drivers/5_platformled/platformled_driver.o: $(deps_/home/royal/myGit/linux/V3S/licheepi_zero/Linux_Drivers/5_platformled/platformled_driver.o)
