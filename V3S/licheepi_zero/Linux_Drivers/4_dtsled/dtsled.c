@@ -7,6 +7,7 @@
 #include <linux/io.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
+#include <linux/of.h>
 
 
 #define dtsled_name             "dtsled"
@@ -17,6 +18,7 @@ struct {
     struct class*   pdtsled_class;
     struct cdev     cdev;
     struct device*  pdev;
+    struct device_node* pNode;
 }rr_dev_obj;
 
 static ssize_t dtsled_read(struct file *file, char __user *buf, size_t count,
@@ -124,11 +126,32 @@ static int __init dtsled_init(void)
         ret = PTR_ERR(rr_dev_obj.pdev);
         goto fail_device_create;
     }
+
+
+    /*
+    2021-5-13加入从设备树节点获取信息*******************************************
+    */
+    rr_dev_obj.pNode = of_find_node_by_name(NULL,"myled_pin0");
+    if(IS_ERR(rr_dev_obj.pNode)){
+        ret = PTR_ERR(rr_dev_obj.pNode);
+        goto err1;
+    }
+    else{
+        printk("inf: device-node.name = %s \r\n ",
+                rr_dev_obj.pNode->name);
+        printk("inf: device-node.pins = %s \r\n ",
+                (char*)of_get_property(rr_dev_obj.pNode,"pins",NULL));
+        printk("inf: device-node.function = %s \r\n ",
+                (char*)of_get_property(rr_dev_obj.pNode,"function",NULL));
+        printk("inf: ok \r\n");
+    }
     
     
     return 0;
 
 
+err1:
+    device_destroy(rr_dev_obj.pdtsled_class,rr_dev_obj.dev_t);
 fail_device_create:
     class_destroy(rr_dev_obj.pdtsled_class);
 fail_class_create:
