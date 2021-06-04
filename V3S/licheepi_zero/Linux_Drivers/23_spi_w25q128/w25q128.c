@@ -35,59 +35,71 @@ static struct w25q128_dat_type{
 static int w25q128_read_regs(struct w25q128_dat_type* obj, void* reg, void* buf, unsigned len)
 {
     int ret = 0;
-    struct spi_transfer    trans;
-    struct spi_message     mess;
-    u8* txbuf = NULL;
+    //struct spi_transfer    trans;
+    //struct spi_message     mess;
+    //u8* txbuf = NULL;
+    //u8* data = 0;
 
-    //动态内存分配
-    txbuf= kzalloc(len,GFP_KERNEL);
-    if(IS_ERR(txbuf)){
-        ret = PTR_ERR(txbuf);
-        printk("err1: w25q128_read_regs.\r\n");
-        goto fail_kzalloc_txbuf;
-    }
+    ////动态内存分配
+    //txbuf= kzalloc(len,GFP_KERNEL);
+    //if(IS_ERR(txbuf)){
+    //    ret = PTR_ERR(txbuf);
+    //    printk("err1: w25q128_read_regs.\r\n");
+    //    goto fail_kzalloc_txbuf;
+    //}
 
     //片选：拉低//////////////////////////
-    gpio_set_value(obj->cs_gpio,0);
+    //gpio_set_value(obj->cs_gpio,0);
 
-    //第一步，发送要读取的寄存器地址    
-    trans.tx_buf    = reg;
-    trans.len       = 1;
+    // //第一步，发送要读取的寄存器地址    
+    // trans.tx_buf    = reg;
+    // trans.len       = 1;
 
-    spi_message_init(&mess);
-    spi_message_add_tail(&trans,&mess);
-    ret = spi_sync(obj->pSPI,&mess);
-    if(ret < 0){
-        printk("err2: w25q128_read_regs.\r\n");
-        goto fail_spi_sync1;
-    }
+    // spi_message_init(&mess);
+    // spi_message_add_tail(&trans,&mess);
+    // ret = spi_sync(obj->pSPI,&mess);
+    // if(ret < 0){
+    //     printk("err2: w25q128_read_regs.\r\n");
+    //     goto fail_spi_sync1;
+    // }
 
-    //第二步，读取数据，SPI是全双工，读取时要写入任意数据
-    txbuf[0] = 0xff;        //无效数据
-    trans.tx_buf    = txbuf;
-    trans.rx_buf    = buf;
-    trans.len       = len;
+    // //第二步，读取数据，SPI是全双工，读取时要写入任意数据
+    // txbuf[0] = 0xff;        //无效数据
+    // trans.tx_buf    = txbuf;
+    // trans.rx_buf    = buf;
+    // trans.len       = len;
 
-    spi_message_init(&mess);
-    spi_message_add_tail(&trans,&mess);
-    ret = spi_sync(obj->pSPI,&mess);
-    if(ret < 0){
-        printk("err3: w25q128_read_regs.\r\n");
-        goto fail_spi_sync2;
-    }
+    // spi_message_init(&mess);
+    // spi_message_add_tail(&trans,&mess);
+    // ret = spi_sync(obj->pSPI,&mess);
+    // if(ret < 0){
+    //     printk("err3: w25q128_read_regs.\r\n");
+    //     goto fail_spi_sync2;
+    // }
 
     //取消片选：拉高//////////////////////
-    gpio_set_value(obj->cs_gpio,1);
+    //gpio_set_value(obj->cs_gpio,1);
+
+    //txbuf[0] = ((u8*)reg)[0];
+
+    ret = spi_write_then_read(obj->pSPI,
+		reg, 1, buf, len); 
+
+    if(ret < 0){
+        printk("err: spi_write_then_read.\r\n");
+        goto fail_spi_write_then_read;
+    }
 
 
-    kfree(txbuf);
+    //kfree(txbuf);
     return ret;
 
-fail_spi_sync2:
-fail_spi_sync1:
-    kfree(txbuf);
+// fail_spi_sync2:
+// fail_spi_sync1:
+fail_spi_write_then_read:
+//   kfree(txbuf);
 
-fail_kzalloc_txbuf:
+//fail_kzalloc_txbuf:
     return ret;
 }
 
@@ -145,12 +157,13 @@ fail_spi_sync1:
 //SPI设备：w25q128 初始化
 static void spi_w25q128_init(struct w25q128_dat_type* obj){
     //读取JEDEC ID      9F 
-    u8  reg = 0x9F;
+    //Manufacturer/Device ID  90
+    u8  reg = 0X90;//0x9F;
     u8  buf[256] = {'\0'};
 
-    w25q128_read_regs(obj, &reg, buf, 3);
+    w25q128_read_regs(obj, &reg, buf, 5);
 
-    printk("manufactureID=%X\r\n ID=%X\r\n ID2=%X\r\n",buf[0],buf[1],buf[2]);
+    printk("manufactureID=%X\r\n ID=%X\r\n ID2=%X\r\n",buf[3],buf[4],buf[2]);
 }
 
 static int w25q128_spi_probe(struct spi_device *spi)
@@ -213,51 +226,51 @@ static int w25q128_spi_probe(struct spi_device *spi)
     }
 
     //初始化spi，设备mode
-    // spi->mode = SPI_MODE_3;
-    // spi_setup(spi);
+    spi->mode = SPI_MODE_3;
+    spi_setup(spi);
 
     //保存 struct spi_device *spi
     w25q128_dat.pSPI = spi;
 
 
-    /* 获取片选引脚 pc2 **********************************************************/
-    //取得SPI控制器（适配器）节点
-    w25q128_dat.pSPI_CTRL_node = of_get_parent(spi->dev.of_node);
-    if(IS_ERR(w25q128_dat.pSPI_CTRL_node)){
-        ret = PTR_ERR(w25q128_dat.pSPI_CTRL_node);
-        printk("err: fail_get_pSPI_CTRL_node.\r\n");
-        goto fail_get_pSPI_CTRL_node;
-    }
+    // /* 获取片选引脚 pc2 **********************************************************/
+    // //取得SPI控制器（适配器）节点
+    // w25q128_dat.pSPI_CTRL_node = of_get_parent(spi->dev.of_node);
+    // if(IS_ERR(w25q128_dat.pSPI_CTRL_node)){
+    //     ret = PTR_ERR(w25q128_dat.pSPI_CTRL_node);
+    //     printk("err: fail_get_pSPI_CTRL_node.\r\n");
+    //     goto fail_get_pSPI_CTRL_node;
+    // }
 
-    //在SPI控制器中获取cs-gpio属性，用到了设备树，pinctrl,gpio子系统
-    w25q128_dat.cs_gpio = of_get_named_gpio(w25q128_dat.pSPI_CTRL_node,"cs-gpio",0);
-    if(!gpio_is_valid(w25q128_dat.cs_gpio)){
-        ret = -ENODEV;
-        printk("err: fail_get_cs_gpio.\r\n");
-        goto fail_get_cs_gpio;
-    }else
-    {
-        printk("debug:of_get_named_gpio = %d .\r\n", w25q128_dat.cs_gpio);
-    }
+    // //在SPI控制器中获取cs-gpio属性，用到了设备树，pinctrl,gpio子系统
+    // w25q128_dat.cs_gpio = of_get_named_gpio(w25q128_dat.pSPI_CTRL_node,"cs-gpio",0);
+    // if(!gpio_is_valid(w25q128_dat.cs_gpio)){
+    //     ret = -ENODEV;
+    //     printk("err: fail_get_cs_gpio.\r\n");
+    //     goto fail_get_cs_gpio;
+    // }else
+    // {
+    //     printk("debug:of_get_named_gpio = %d .\r\n", w25q128_dat.cs_gpio);
+    // }
 
-    /* gpio子系统操作示例 *********************************************************/
-    //申请gpio
-    ret = gpio_request(w25q128_dat.cs_gpio,"cs");
-    if(ret < 0)
-    {
-        printk("err: fail_gpio_request.\r\n");
-        goto fail_gpio_request;
-    }
+    // /* gpio子系统操作示例 *********************************************************/
+    // //申请gpio
+    // ret = gpio_request(w25q128_dat.cs_gpio,"cs");
+    // if(ret < 0)
+    // {
+    //     printk("err: fail_gpio_request.\r\n");
+    //     goto fail_gpio_request;
+    // }
 
-    //gpio设置为输出，默认高电平
-    ret = gpio_direction_output(w25q128_dat.cs_gpio,1);
-    if(ret < 0)
-    {
-        printk("err: fail_gpio_direction_output.\r\n");
-        goto fail_gpio_direction_output;
-    }
-    gpio_set_value(w25q128_dat.cs_gpio,1);
-    mdelay(200);
+    // //gpio设置为输出，默认高电平
+    // ret = gpio_direction_output(w25q128_dat.cs_gpio,1);
+    // if(ret < 0)
+    // {
+    //     printk("err: fail_gpio_direction_output.\r\n");
+    //     goto fail_gpio_direction_output;
+    // }
+    // gpio_set_value(w25q128_dat.cs_gpio,1);
+    // mdelay(200);
     
 
     /* SPI设备 w25q128 初始化 ****************************************************/
@@ -267,8 +280,8 @@ static int w25q128_spi_probe(struct spi_device *spi)
 
 
 
-fail_gpio_direction_output:
-    gpio_free(w25q128_dat.cs_gpio);
+// fail_gpio_direction_output:
+//     gpio_free(w25q128_dat.cs_gpio);
 fail_gpio_request:
 fail_get_cs_gpio:    
 fail_get_pSPI_CTRL_node:
